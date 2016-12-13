@@ -35,12 +35,22 @@ class ChunkTest extends TestCase {
     var i = 0;
     for (c in chunk)
       assertEquals(hello.charCodeAt(i++), c);
+    
+    var bytes = chunk.toBytes();
+      
+    assertEquals(hello + hello, chunk & chunk);
+    assertEquals(hello + hello, hello & chunk);
+    assertEquals(hello + hello, chunk & hello);
+    assertEquals(hello + hello, chunk & bytes);
+    assertEquals(hello + hello, bytes & chunk);
       
     for (i in 0...4) {
       chunk = chunk.concat(chunk);
       hello += hello;
     }
     compare(hello, chunk);  
+    
+    
   }
 
 }

@@ -245,5 +245,20 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   @:from static inline function ofString(s:String):Chunk 
     return ofBytes(Bytes.ofString(s));
     
+  @:op(a & b) static function catChunk(a:Chunk, b:Chunk)
+    return a.concat(b);
+    
+  @:op(a & b) static function rcatString(a:Chunk, b:String)
+    return catChunk(a, b);
+    
+  @:op(a & b) static function lcatString(a:String, b:Chunk)
+    return catChunk(a, b);
+    
+  @:op(a & b) static function lcatBytes(a:Bytes, b:Chunk)
+    return catChunk(a, b);
+    
+  @:op(a & b) static function rcatBytes(a:Chunk, b:Bytes)
+    return catChunk(a, b);
+    
   static public var EMPTY(default, null):Chunk = new EmptyChunk();
 }

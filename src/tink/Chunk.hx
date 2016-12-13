@@ -260,5 +260,5 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   @:op(a & b) static function rcatBytes(a:Chunk, b:Bytes)
     return catChunk(a, b);
     
-  static public var EMPTY(default, null):Chunk = (new EmptyChunk() : Chunk);
+  static public var EMPTY(default, null):Chunk = ((new EmptyChunk() : ChunkObject) : Chunk);//haxe 3.2.1 ¯\_(ツ)_/¯
 }

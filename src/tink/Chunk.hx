@@ -86,6 +86,16 @@ class ChunkCursor {
     
     reset();
   }
+
+  public function flush() {
+    var left = [for (i in curPartIndex...parts.length) (parts[i]:Chunk)];
+    if (left.length > 0) {
+      left[0] = curPart.slice(curOffset, curPart.getLength());
+    }
+    parts = [];
+    reset();
+    return Chunk.join(left);
+  }
   
   public function next():Bool {
     if (currentPos == length) return false;
@@ -281,6 +291,17 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   @:to public inline function toBytes()
     return this.toBytes();
     
+  static public function join(chunks:Array<Chunk>)
+    return switch chunks {
+      case null | []: EMPTY;
+      case [v]: v;
+      case v:
+        var ret = v[0] & v[1];
+        for (i in 2...v.length)
+          ret = ret & v[i];
+        ret;
+    }
+
   @:from static inline function ofBytes(b:Bytes):Chunk 
     return (ByteChunk.of(b) : ChunkObject);
     

@@ -31,6 +31,7 @@ class ChunkIterator {
     return ret;
   }
 }
+
 class ChunkCursor {
   
   var parts:Array<ByteChunk>;
@@ -41,25 +42,59 @@ class ChunkCursor {
   
   public var length(default, null):Int = 0;
   public var currentPos(default, null):Int = 0;
-  public var currentByte(default, null):Int = 0;
+  public var currentByte(default, null):Int = -1;
   
   public function new(parts) {
     
     this.parts = parts;
     
+    reset();    
+  }
+    
+  function reset() {
+    length = 0;
+    currentPos = 0;
+    currentByte = -1;
+    curOffset = 0;
+    
     for (p in parts)
       length += p.getLength();
     
-    this.curPart = parts[0];
+    this.curPart = parts[this.curPartIndex = 0];
     if (this.curPart != null) {
       this.curLength = this.curPart.getLength();
       this.currentByte = this.curPart.getByte(0);
+    }    
+  }
+  
+  public function shift(chunk:Chunk) {
+    
+    parts.splice(0, curPartIndex);//throw out all old chunks
+    
+    switch parts[0] {
+      case null:
+      case chunk:
+        switch chunk.getSlice(curOffset, curLength) {//get rid of old data in current chunk
+          case null:
+            parts.shift();
+          case rest:
+            parts[0] = rest;
+        }
     }
+    
+    (chunk : ChunkObject).flatten(parts);//load new data
+    
+    reset();
   }
   
   public function next():Bool {
-    if (currentPos >= length - 1) return false;
+    if (currentPos == length) return false;
     currentPos++;
+    if (currentPos == length) {
+      currentByte = -1;
+      curOffset = parts.length;//right?
+      return false;
+    }
     if (curOffset == curLength - 1) {
       curOffset = 0;
       curPart = parts[++curPartIndex];
@@ -175,18 +210,25 @@ private class ByteChunk extends ChunkBase implements ChunkObject {
   public function getLength():Int 
     return to - from;
   
-  public function slice(from:Int, to:Int):Chunk {
+  public function getSlice(from:Int, to:Int) { 
     if (to > this.getLength())
       to = this.getLength();
       
     if (from < 0)
       from = 0;
-    
+      
     return
-      if (to <= from) Chunk.EMPTY;
+      if (to <= from) null;
       else if (to == this.getLength() && from == 0) this;
       else new ByteChunk(data, this.from + from, to + this.from);
   }
+    
+  public function slice(from:Int, to:Int):Chunk 
+    return
+      switch getSlice(from, to) {
+        case null: Chunk.EMPTY;
+        case v: v;
+      }
   
   public function blitTo(target:Bytes, offset:Int):Void 
     target.blit(offset, wrapped, from, getLength());

@@ -70,12 +70,23 @@ class CursorTest extends TestCase {
     }
 
     var pack = noise(1 << 16);
-    var count = 32;
+    var count = 
+      #if (interp || php)
+        16;
+      #elseif (js || java || cs)
+        1024;
+      #else
+        128;
+      #end
     var huge = Chunk.join([for (i in 0...count) pack]);
-    var total:Chunk = noise(321) & first & second & noise(123) & first & huge & first & second & noise(200);
+    var total:Chunk = noise(321) & first & second & noise(123) & first & huge & first & second & noise(200) & 'werf';
     var c = total.cursor();
     
-    var together = [for (i in 0...together.length) together.charCodeAt(i)];
+    function seekable(s:String) {
+      return [for (i in 0...s.length) s.charCodeAt(i)];
+    }
+
+    var together = seekable(together);
     
     function expect(length:Int, ?pos:haxe.PosInfos)
       switch c.seek(together) {
@@ -87,6 +98,5 @@ class CursorTest extends TestCase {
     haxe.Timer.measure(function () {
       expect(123 + first.length + huge.length);
     });
-
   }
 }

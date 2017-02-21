@@ -1,5 +1,8 @@
 package tink.chunk;
 
+import haxe.ds.Option;
+using haxe.io.Bytes;
+
 class ChunkCursor {
   
   var parts:Array<ByteChunk>;
@@ -90,35 +93,68 @@ class ChunkCursor {
     return Chunk.join(right);
   }
 
-  public function seek(seekable:Array<Int>):haxe.ds.Option<Chunk> {
+  public function seek(seekable:Array<Int>):Option<Chunk> {
 
-    var copy = clone(),
-        max = seekable.length - 1,
-        candidates = [];
+    if (curPart == null)
+      return None;
 
+    var max = seekable.length - 1,
+        first = seekable[0],
+        candidates = [],
+        count = 0,
+        copy = clone();
+    
     copy.shift();
 
-    do {
-      var b = copy.currentByte;
+    function part(b:ByteChunk, offset:Int) @:privateAccess {
+      var data = b.data;
       
-      candidates = [
-        for (pos in candidates) 
-          if (seekable[pos] == b) 
-            if (pos == max) {
-              this.moveBy(copy.currentPos + 1);
-              copy.moveBy(-seekable.length + 1);
-              var before = copy.left();
-              return Some(before);
-            }
-            else pos + 1
-          else continue
-      ];
-      if (b == seekable[0])
-        candidates.push(1);
-      
-    } while (copy.next());
+      for (i in b.from + offset ... b.to) {
+        var byte = data.fastGet(i);
 
-    return None;
+        if (candidates.length > 0) {
+          var c = 0;
+          while (c < count) {
+            var pos = candidates[c];
+            if (seekable[pos] == byte) 
+              if (pos == max) {
+                copy.moveBy(i-(b.from + offset) - seekable.length + 1);
+                var before = copy.left();
+                this.moveBy(before.length + seekable.length);
+                return Some(before);
+              }
+              else candidates[c++] = pos + 1;
+            else {
+              count--;
+              var last = candidates.pop();
+              if (count > c)
+                candidates[c] = last;
+            }
+
+          }
+        }
+
+        if (byte == first)
+          count = candidates.push(1);
+      }
+
+      copy.moveBy(b.to - (b.from + offset));
+
+      return None;
+    }
+
+    switch part(curPart, curOffset) {
+      case None: 
+
+        for (i in curPartIndex+1...parts.length)
+          switch part(parts[i], 0) {
+            case Some(v): return Some(v);
+            case None: 
+          }
+
+        return None;
+      case v: return v;
+    }
   }
   
   public inline function moveBy(delta:Int) 

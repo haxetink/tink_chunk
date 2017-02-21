@@ -1,0 +1,4 @@
+tests.hxml
+-lib travix
+-cp src
+--interp

@@ -93,9 +93,9 @@ class ChunkCursor {
     return Chunk.join(right);
   }
 
-  public function seek(seekable:Array<Int>):Option<Chunk> {
+  public function seek(seekable:Seekable):Option<Chunk> {
 
-    if (curPart == null)
+    if (curPart == null || seekable == null || seekable.length == 0)
       return None;
 
     var max = seekable.length - 1,

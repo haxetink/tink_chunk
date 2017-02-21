@@ -85,9 +85,7 @@ class CursorTest extends TestCase {
     function seekable(s:String) {
       return [for (i in 0...s.length) s.charCodeAt(i)];
     }
-
-    var together = seekable(together);
-    
+        
     function expect(length:Int, ?pos:haxe.PosInfos)
       switch c.seek(together) {
         case Some(v): assertEquals(length, v.length, pos);

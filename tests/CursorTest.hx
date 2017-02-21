@@ -81,19 +81,21 @@ class CursorTest extends TestCase {
     var huge = Chunk.join([for (i in 0...count) pack]);
     var total:Chunk = noise(321) & first & second & noise(123) & first & huge & first & second & noise(200) & 'werf';
     var c = total.cursor();
-    
-    function seekable(s:String) {
-      return [for (i in 0...s.length) s.charCodeAt(i)];
-    }
-        
-    function expect(length:Int, ?pos:haxe.PosInfos)
-      switch c.seek(together) {
-        case Some(v): assertEquals(length, v.length, pos);
-        case None: assertTrue(false, pos);
-      }
 
-    expect(321);
-    var start = haxe.Timer.stamp();
-    expect(123 + first.length + huge.length);
+    for (noPrune in [true, false]) {
+
+      function expect(length:Int, ?pos:haxe.PosInfos)
+        switch c.seek(together, { withoutPruning: noPrune }) {
+          case Some(v): assertEquals(length, v.length, pos);
+          case None: assertTrue(false, pos);
+        }
+
+      expect(321);
+      expect(123 + first.length + huge.length);
+      c.moveTo(0);
+      
+    }
+
+    assertEquals(204, c.length);
   }
 }

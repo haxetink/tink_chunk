@@ -53,6 +53,20 @@ class ChunkCursor {
     }    
   }
   
+  public function flush() {
+    var ret = left();
+    prune();
+    return ret;
+  }
+
+  public inline function prune() 
+    shift();
+
+  public function add(chunk:Chunk) {
+    (chunk : ChunkObject).flatten(parts);//load new data
+    reset();
+  }
+
   public function shift(?chunk:Chunk) {
 
     parts.splice(0, curPartIndex);//throw out all old chunks
@@ -69,9 +83,9 @@ class ChunkCursor {
     }
     
     if (chunk != null)
-      (chunk : ChunkObject).flatten(parts);//load new data
-    
-    reset();
+      add(chunk);
+    else
+      reset();
   }
 
   public function clear() {
@@ -93,7 +107,7 @@ class ChunkCursor {
     return Chunk.join(right);
   }
 
-  public function seek(seekable:Seekable):Option<Chunk> {
+  public function seek(seekable:Seekable, ?options: { ?withoutPruning:Bool }):Option<Chunk> {
 
     if (curPart == null || seekable == null || seekable.length == 0)
       return None;
@@ -121,6 +135,11 @@ class ChunkCursor {
                 copy.moveBy(i-(b.from + offset) - seekable.length + 1);
                 var before = copy.left();
                 this.moveBy(before.length + seekable.length);
+                switch options {
+                  case null | { withoutPruning: false | null }:
+                    this.prune();
+                  default:
+                }
                 return Some(before);
               }
               else candidates[c++] = pos + 1;

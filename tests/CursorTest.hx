@@ -1,10 +1,7 @@
 package;
 
-import haxe.io.Bytes;
 import haxe.unit.TestCase;
 import tink.Chunk;
-
-using StringTools;
 
 class CursorTest extends TestCase {
   
@@ -93,7 +90,7 @@ class CursorTest extends TestCase {
       expect(321);
       expect(123 + first.length + huge.length);
       c.moveTo(0);
-      
+
     }
 
     assertEquals(204, c.length);

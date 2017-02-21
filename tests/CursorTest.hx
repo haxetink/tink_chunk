@@ -93,8 +93,7 @@ class CursorTest extends TestCase {
       }
 
     expect(321);
-    haxe.Timer.measure(function () {
-      expect(123 + first.length + huge.length);
-    });
+    var start = haxe.Timer.stamp();
+    expect(123 + first.length + huge.length);
   }
 }

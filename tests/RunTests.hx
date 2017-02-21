@@ -5,7 +5,7 @@ import haxe.unit.TestRunner;
 
 class RunTests {
   static var cases:Array<Void->TestCase> = [
-    // ChunkTest.new,
+    ChunkTest.new,
     CursorTest.new
   ];
   static function main() {

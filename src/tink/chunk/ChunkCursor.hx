@@ -85,7 +85,7 @@ class ChunkCursor {
   public function right() {
     var right = [for (i in curPartIndex...parts.length) (parts[i]:Chunk)];
     if (right.length > 0) {
-      right[0] = curPart.slice(curOffset, curPart.getLength());
+      right[0] = curPart.slice(curOffset, curLength);
     }
     return Chunk.join(right);
   }
@@ -128,31 +128,40 @@ class ChunkCursor {
     if (position < 0) position = 0;
     
     this.currentPos = position;
-
-    for (i in 0...parts.length) {
-      var c = parts[i];
-      switch c.getLength() {
-        case enough if (enough > position):
-          this.curPart = c;
-          this.curPartIndex = i;
-          this.curOffset = position;
-          this.currentByte = c.getByte(position);
-        case v: 
-          position -= v;
+    
+    if (position == length) ffwd();
+    else
+      for (i in 0...parts.length) {
+        var c = parts[i];
+        switch c.getLength() {
+          case enough if (enough > position):
+            this.curPart = c;
+            this.curPartIndex = i;
+            this.curOffset = position;
+            this.curLength = c.getLength();
+            this.currentByte = c.getByte(position);
+            break;
+          case v: 
+            position -= v;
+        }
       }
-    }
 
     return this.currentPos;
+  }
+
+  function ffwd() {
+    currentByte = -1;
+    curLength = 0;
+    curOffset = 0;
+    curPart = null;
+    curPartIndex = parts.length;//right?
   }
 
   public function next():Bool {
     if (currentPos == length) return false;
     currentPos++;
     if (currentPos == length) {
-      currentByte = -1;
-      curOffset = 0;
-      curPart = null;
-      curPartIndex = parts.length;//right?
+      ffwd();
       return false;
     }
     if (curOffset == curLength - 1) {

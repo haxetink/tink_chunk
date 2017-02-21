@@ -1,6 +1,5 @@
 package;
 
-import haxe.Timer;
 import haxe.io.Bytes;
 import haxe.unit.TestCase;
 import tink.Chunk;

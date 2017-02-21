@@ -55,4 +55,38 @@ class CursorTest extends TestCase {
     }
   }
 
+  function testSeek() {
+    var first = 'abcdefghijklmnopqrstuvwxyz';
+    var second = first.toUpperCase();
+    
+    var together = first + second;
+
+    function noise(length:Int):Chunk {
+      var ret = '';
+      while (ret.length <= length) {
+        ret += together.substr(0, Std.random(together.length));
+      }
+      return ret.substr(0, length);
+    }
+
+    var pack = noise(1 << 16);
+    var count = 32;
+    var huge = Chunk.join([for (i in 0...count) pack]);
+    var total:Chunk = noise(321) & first & second & noise(123) & first & huge & first & second & noise(200);
+    var c = total.cursor();
+    
+    var together = [for (i in 0...together.length) together.charCodeAt(i)];
+    
+    function expect(length:Int, ?pos:haxe.PosInfos)
+      switch c.seek(together) {
+        case Some(v): assertEquals(length, v.length, pos);
+        case None: assertTrue(false, pos);
+      }
+
+    expect(321);
+    haxe.Timer.measure(function () {
+      expect(123 + first.length + huge.length);
+    });
+
+  }
 }

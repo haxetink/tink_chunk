@@ -90,32 +90,36 @@ class ChunkCursor {
     return Chunk.join(right);
   }
 
-  // public function seek(seekable:Array<Int>) {
+  public function seek(seekable:Array<Int>):haxe.ds.Option<Chunk> {
 
-  //   var copy = clone(),
-  //       max = seekable.length;
-  //       candidates = [];
+    var copy = clone(),
+        max = seekable.length - 1,
+        candidates = [];
 
-  //   copy.shift();
+    copy.shift();
 
-  //   do {
-  //     var b = copy.currentByte;
+    do {
+      var b = copy.currentByte;
       
-  //     candidates = [
-  //       for (pos in candidates) 
-  //         if (seekable[pos] == b) 
-  //           if (pos == max) {
-  //             var before = copy.left()
-  //           }
-  //           else pos + 1
-  //         else continue
-  //     ];
+      candidates = [
+        for (pos in candidates) 
+          if (seekable[pos] == b) 
+            if (pos == max) {
+              this.moveBy(copy.currentPos + 1);
+              copy.moveBy(-seekable.length + 1);
+              var before = copy.left();
+              return Some(before);
+            }
+            else pos + 1
+          else continue
+      ];
+      if (b == seekable[0])
+        candidates.push(1);
+      
+    } while (copy.next());
 
-  //     // if (candidates.length > 0 && candidates[0] == max)
-  //   } while (next());
-
-    
-  // }
+    return None;
+  }
   
   public inline function moveBy(delta:Int) 
     moveTo(currentPos + delta);

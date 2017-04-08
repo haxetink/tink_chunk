@@ -95,4 +95,9 @@ class CursorTest extends TestCase {
 
     assertEquals(204, c.length);
   }
+
+  function testEdgeCase() {
+    assertEquals(0, Chunk.EMPTY.cursor().left().length);
+    assertEquals(0, Chunk.EMPTY.cursor().right().length);
+  }
 }

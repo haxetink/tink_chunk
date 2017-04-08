@@ -94,12 +94,14 @@ class ChunkCursor {
   }
 
   public function left() {
+    if (curPart == null) return Chunk.EMPTY;
     var left = [for (i in 0...curPartIndex) (parts[i]:Chunk)];
     left.push(curPart.slice(0, curOffset));
     return Chunk.join(left);
   }
   
   public function right() {
+    if (curPart == null) return Chunk.EMPTY;
     var right = [for (i in curPartIndex...parts.length) (parts[i]:Chunk)];
     if (right.length > 0) {
       right[0] = curPart.slice(curOffset, curLength);

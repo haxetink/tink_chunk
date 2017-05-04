@@ -113,10 +113,10 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
         ret;
     }
 
-  @:from static inline function ofBytes(b:Bytes):Chunk 
+  @:from public static inline function ofBytes(b:Bytes):Chunk 
     return (ByteChunk.of(b) : ChunkObject);
     
-  @:from static inline function ofString(s:String):Chunk 
+  @:from public static inline function ofString(s:String):Chunk 
     return ofBytes(Bytes.ofString(s));
     
   @:op(a & b) static function catChunk(a:Chunk, b:Chunk)

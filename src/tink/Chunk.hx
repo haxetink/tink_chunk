@@ -93,6 +93,9 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   public inline function blitTo(target:Bytes, offset:Int)
     return this.blitTo(target, offset);
   
+  public inline function toHex()
+    return this.toBytes().toHex();
+    
   @:to public inline function toString()
     return this.toString();
     

@@ -119,6 +119,13 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   @:from static inline function ofString(s:String):Chunk 
     return ofBytes(Bytes.ofString(s));
     
+  public static function ofHex(s:String):Chunk {
+    var length = s.length >> 1;
+    var bytes = Bytes.alloc(length);
+    for(i in 0...length) bytes.set(i, Std.parseInt('0x' + s.substr(i * 2, 2)));
+    return bytes;
+  }
+    
   @:op(a & b) static function catChunk(a:Chunk, b:Chunk)
     return a.concat(b);
     

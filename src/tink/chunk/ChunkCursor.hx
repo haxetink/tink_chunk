@@ -21,7 +21,11 @@ class ChunkCursor {
     ret.reset();
     return ret;
   }
-
+  
+  /**
+   *  Creates a cloned cursor
+   *  @return cloned cursor
+   */
   public function clone() {
     var ret = new ChunkCursor();
     ret.parts = this.parts.copy();
@@ -53,20 +57,36 @@ class ChunkCursor {
     }    
   }
   
+  /**
+   *  Like prune(), but returns the removed chunk
+   *  @return Removed chunk (chunk to the left of current position)
+   */
   public function flush() {
     var ret = left();
     prune();
     return ret;
   }
 
+  /**
+   *  Remove chunk to the left of current position and reset `currentPos` to zero.
+   */
   public inline function prune() 
     shift();
 
+  /**
+   *  Add a chunk to the end and reset `currentPos` to zero.
+   *  @param chunk - Chunk to be added
+   */
   public function add(chunk:Chunk) {
     (chunk : ChunkObject).flatten(parts);//load new data
     reset();
   }
 
+  /**
+   *  Remove data to the left of current position and optionally add a chunk at the end.
+   *  Reset `currentPos` to zero.
+   *  @param chunk - Optional chunk to be added to the end
+   */
   public function shift(?chunk:Chunk) {
 
     parts.splice(0, curPartIndex);//throw out all old chunks
@@ -88,11 +108,17 @@ class ChunkCursor {
       reset();
   }
 
+  /**
+   *  Clear all data of this cursor
+   */
   public function clear() {
     parts = [];
     reset();
   }
 
+  /**
+   *  Return the chunk to the left of current position, excluding current byte
+   */
   public function left() {
     if (curPart == null) return Chunk.EMPTY;
     var left = [for (i in 0...curPartIndex) (parts[i]:Chunk)];
@@ -100,6 +126,9 @@ class ChunkCursor {
     return Chunk.join(left);
   }
   
+  /**
+   *  Return the chunk to the right of current position, including current byte
+   */
   public function right() {
     if (curPart == null) return Chunk.EMPTY;
     var right = [for (i in curPartIndex...parts.length) (parts[i]:Chunk)];
@@ -178,9 +207,21 @@ class ChunkCursor {
     }
   }
   
+  /**
+   *  Move cursor position by specified amount.
+   *  @param delta - amount to move
+   *  @return new position
+   */
   public inline function moveBy(delta:Int) 
     moveTo(currentPos + delta);
 
+  /**
+   *  Move to specified position.
+   *  If `position` is greater than length of cursor, it is set to `length - 1`.
+   *  If `position` is less than zero, it is set to zero.
+   *  @param position - the position to move to
+   *  @return new position
+   */
   public function moveTo(position:Int) {
     
     if (length == 0) return 0;
@@ -218,6 +259,10 @@ class ChunkCursor {
     curPartIndex = parts.length;//right?
   }
 
+  /**
+   *  Advance to next byte
+   *  @return `false` if there is no next byte
+   */
   public function next():Bool {
     if (currentPos == length) return false;
     currentPos++;

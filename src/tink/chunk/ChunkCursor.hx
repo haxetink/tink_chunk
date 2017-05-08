@@ -213,7 +213,7 @@ class ChunkCursor {
    *  @return new position
    */
   public inline function moveBy(delta:Int) 
-    moveTo(currentPos + delta);
+    return moveTo(currentPos + delta);
 
   /**
    *  Move to specified position.

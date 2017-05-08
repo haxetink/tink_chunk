@@ -208,6 +208,25 @@ class ChunkCursor {
   }
   
   /**
+   *  Like moveBy(), but returns the swept chunk instead of new position
+   *  @param len - length to sweep
+   *  @return the swept chunk
+   */
+  public function sweep(len:Int) {
+    var data = right().slice(0, len);
+    moveBy(len);
+    return data;
+  }
+  
+  /**
+   *  Like moveTo(), but returns the swept chunk instead of new position
+   *  @param pos - target position
+   *  @return the swept chunk
+   */
+  public inline function sweepTo(pos:Int)
+    return sweep(pos - currentPos);
+  
+  /**
    *  Move cursor position by specified amount.
    *  @param delta - amount to move
    *  @return new position

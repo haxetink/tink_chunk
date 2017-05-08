@@ -95,6 +95,22 @@ class CursorTest extends TestCase {
 
     assertEquals(204, c.length);
   }
+  
+  function testSweep() {
+    var chunk:Chunk = '0123456789';
+    var cursor = chunk.cursor();
+    assertEquals('01234', cursor.sweep(5));
+    assertEquals(5, cursor.currentPos);
+    assertEquals('56', cursor.sweepTo(7));
+    assertEquals(7, cursor.currentPos);
+    
+    var cursor = chunk.cursor();
+    cursor.next();
+    assertEquals('12345', cursor.sweep(5));
+    assertEquals(6, cursor.currentPos);
+    assertEquals('6', cursor.sweepTo(7));
+    assertEquals(7, cursor.currentPos);
+  }
 
   function testEdgeCase() {
     assertEquals(0, Chunk.EMPTY.cursor().left().length);

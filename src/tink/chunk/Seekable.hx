@@ -13,6 +13,9 @@ abstract Seekable(Array<Int>) {
   @:arrayAccess public inline function get(index:Int)
     return this[index];
   
+  @:from static public inline function ofChunk(c:Chunk)
+    return ofBytes(c);
+  
   @:from static public function ofBytes(b:Bytes)
     return new Seekable([for (i in 0...b.length) b.get(i)]);
 

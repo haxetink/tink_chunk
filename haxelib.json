@@ -1,6 +1,13 @@
 {
 	"name": "tink_chunk",
-	"license": "MIT",
+	"classPath": "src",
+	"dependencies": {},
+	"url": "https://github.com/haxetink/tink_chunk/",
+	"contributors": [
+		"back2dos"
+	],
+	"version": "0.2.0",
+	"releasenote": "Various API and performance improvements.",
 	"tags": [
 		"tink",
 		"cross",
@@ -8,12 +15,5 @@
 		"bytes",
 		"binary"
 	],
-	"classPath": "src",
-	"contributors": [
-		"back2dos"
-	],
-	"releasenote": "First release.",
-	"version": "0.1.0",
-	"url": "https://github.com/haxetink/tink_chunk/",
-	"dependencies": {}
+	"license": "MIT"
 }

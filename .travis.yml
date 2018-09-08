@@ -13,14 +13,14 @@ jobs:
         - linux
         # - osx
       install:
-        - npm i -g lix haxe-travix
+        - npm i -g lix
         - lix download
       script:
-        - travix interp
-        - travix neko
-        # - travix python
-        - travix node
-        - travix java
+        - lix run travix interp
+        - lix run travix neko
+        # - lix run travix python
+        - lix run travix node
+        - lix run travix java
     
     - stage: deploy
       language: haxe

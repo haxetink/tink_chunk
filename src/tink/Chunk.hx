@@ -5,7 +5,11 @@ import haxe.io.BytesData;
 import tink.chunk.*;
 
 private class EmptyChunk extends ChunkBase implements ChunkObject {
-  public function new() { }
+  public function new() {
+    #if python
+    super(); // https://github.com/HaxeFoundation/haxe/issues/7541
+    #end
+  }
     
   public function getLength()
     return 0;
@@ -35,6 +39,9 @@ private class CompoundChunk extends ChunkBase implements ChunkObject {
     return this.length;
     
   public function new(left:Chunk, right:Chunk) {
+    #if python
+    super(); // https://github.com/HaxeFoundation/haxe/issues/7541
+    #end
     //TODO: try balancing here
     this.left = left;
     this.right = right;

@@ -18,6 +18,9 @@ class ByteChunk extends ChunkBase implements ChunkObject {
     }
   
   function new(data, from, to) {
+    #if python
+    super(); // https://github.com/HaxeFoundation/haxe/issues/7541
+    #end
     this.data = data;
     this.from = from;
     this.to = to;

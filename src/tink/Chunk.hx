@@ -108,6 +108,11 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
     
   @:to public inline function toBytes()
     return this.toBytes();
+  
+  #if nodejs
+  @:to public inline function toBuffer()
+    return js.node.Buffer.hxFromBytes(this.toBytes());
+  #end
     
   static public function join(chunks:Array<Chunk>)
     return switch chunks {
@@ -125,6 +130,11 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
     
   @:from public static inline function ofString(s:String):Chunk 
     return ofBytes(Bytes.ofString(s));
+    
+  #if nodejs
+  @:from public static inline function ofBuffer(s:js.node.Buffer):Chunk 
+    return ofBytes(s.hxToBytes());
+  #end
     
   public static function ofHex(s:String):Chunk {
     var length = s.length >> 1;

@@ -3,6 +3,8 @@ package;
 import haxe.unit.TestCase;
 import tink.Chunk;
 
+using tink.CoreApi;
+
 class CursorTest extends TestCase {
   
   function testCursor() {
@@ -115,5 +117,45 @@ class CursorTest extends TestCase {
   function testEdgeCase() {
     assertEquals(0, Chunk.EMPTY.cursor().left().length);
     assertEquals(0, Chunk.EMPTY.cursor().right().length);
+  }
+  
+  function testInt32() {
+    var chunk = Chunk.ofHex('00000005');
+    var cursor = chunk.cursor();
+    assertEquals(83886080, chunk.cursor().readInt32().sure());
+    assertEquals(5, chunk.cursor().readInt32(false).sure());
+  }
+  
+  function testUInt32() {
+    var chunk = Chunk.ofHex('12345678');
+    assertEquals(0x78563412, chunk.cursor().readUInt32().sure());
+    assertEquals(0x12345678, chunk.cursor().readUInt32(false).sure());
+  }
+  
+  function testInt16() {
+    var chunk = Chunk.ofHex('0005');
+    var cursor = chunk.cursor();
+    assertEquals(1280, chunk.cursor().readInt16().sure());
+    assertEquals(5, chunk.cursor().readInt16(false).sure());
+  }
+  
+  function testUInt16() {
+    var chunk = Chunk.ofHex('1234');
+    assertEquals(0x3412, chunk.cursor().readUInt16().sure());
+    assertEquals(0x1234, chunk.cursor().readUInt16(false).sure());
+  }
+  
+  function testInt8() {
+    var chunk = Chunk.ofHex('ff05');
+    var cursor = chunk.cursor();
+    assertEquals(-1, cursor.readInt8().sure());
+    assertEquals(5, cursor.readInt8().sure());
+  }
+  
+  function testUInt8() {
+    var chunk = Chunk.ofHex('01fe');
+    var cursor = chunk.cursor();
+    assertEquals(1, cursor.readUInt8().sure());
+    assertEquals(254, cursor.readUInt8().sure());
   }
 }

@@ -2,6 +2,7 @@ package tink.chunk;
 
 import haxe.ds.Option;
 using haxe.io.Bytes;
+using tink.CoreApi;
 
 class ChunkCursor {
   
@@ -299,5 +300,86 @@ class ChunkCursor {
       currentByte = curPart.getByte(++curOffset);
     }
     return true;
+  }
+  
+  /**
+   *  Read string from current position
+   *  @return Swept string
+   */
+  public function readString(len:Int) {
+    return switch length - currentPos {
+      case v if(v < len):
+        Failure(new Error('Requires $len bytes but there is only $v left in the chunk'));
+      case _:
+        Success(sweep(length).toString());
+    }
+  }
+  
+  /**
+   *  Read unsigned 32 bit integer from current position and advance this cursor accordingly
+   */
+  public inline function readUInt32(littleEndian = true)
+    return readInt(littleEndian, 4, false);
+  
+  /**
+   *  Read unsigned 16 bit integer from current position and advance this cursor accordingly
+   */
+  public inline function readUInt16(littleEndian = true)
+    return readInt(littleEndian, 2, false);
+  
+  /**
+   *  Read unsigned 8 bit integer from current position and advance this cursor accordingly
+   */
+  public inline function readUInt8()
+    return readInt(true, 1, false);
+  
+  /**
+   *  Read signed 32 bit integer from current position and advance this cursor accordingly
+   */
+  public inline function readInt32(littleEndian = true)
+    return readInt(littleEndian, 4, true);
+  
+  /**
+   *  Read signed 16 bit integer from current position and advance this cursor accordingly
+   */
+  public inline function readInt16(littleEndian = true)
+    return readInt(littleEndian, 2, true);
+  
+  /**
+   *  Read signed 8 bit integer from current position and advance this cursor accordingly
+   */
+  public inline function readInt8()
+    return readInt(true, 1, true);
+  
+  inline function toSigned(i:Int, size:Int) {
+    var bits = size * 8;
+    #if (js || eval || cs || cpp || hl)
+      // http://blog.vjeux.com/2013/javascript/conversion-from-uint8-to-int8-x-24.html
+      var shift = 32 - bits;
+      return i << shift >> shift;
+    #else
+      return i > (1 << (bits - 1)) - 1 ? i - (1 << bits) : i;
+    #end
+  }
+    
+  function readInt(littleEndian, len, signed):Outcome<Int, Error> {
+    return switch length - currentPos {
+      case v if(v < len):
+        Failure(new Error('Requires $len bytes but there is only $v left in the chunk'));
+      case _:
+        var ret = 0;
+        if(littleEndian) {
+          for(i in 0...len) {
+            ret |= currentByte << (i * 8);
+            next();
+          }
+        } else {
+          for(i in 0...len) {
+            ret |= currentByte << ((len - i - 1) * 8);
+            next();
+          }
+        }
+        Success(signed ? toSigned(ret, len) : ret);
+    }
   }
 }

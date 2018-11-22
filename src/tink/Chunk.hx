@@ -159,5 +159,15 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   @:op(a & b) static function rcatBytes(a:Chunk, b:Bytes)
     return catChunk(a, b);
     
+  #if tink_json
+  
+  @:to inline function toRepresentation():tink.json.Representation<Bytes> 
+    return new tink.json.Representation(toBytes());
+    
+  @:from static inline function ofRepresentation<T>(rep:tink.json.Representation<Bytes>):Chunk
+    return ofBytes(rep.get());
+    
+  #end
+    
   static public var EMPTY(default, null):Chunk = ((new EmptyChunk() : ChunkObject) : Chunk);//haxe 3.2.1 ¯\_(ツ)_/¯
 }

@@ -74,6 +74,7 @@ private class CompoundChunk extends ChunkBase implements ChunkObject {
   
 }
 
+@:pure
 abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   
   public var length(get, never):Int;

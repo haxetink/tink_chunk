@@ -20,9 +20,7 @@ class ChunkTest extends TestCase {
   function testChunk() {
     chunkTests(function (str: String): Chunk return str);
     #if nodejs
-    chunkTests(function (str: String): Chunk
-      return js.node.Buffer.hxFromBytes(Bytes.ofString(str))
-    );
+    chunkTests(function (str: String): Chunk return new js.node.Buffer(str));
     #end
   }
   

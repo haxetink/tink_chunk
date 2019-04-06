@@ -38,7 +38,7 @@ script:
   - lix run travix lua "${args[@]}"
   - lix run travix cpp "${args[@]}"
   - lix run travix cs "${args[@]}"
-  - if [[ "$(haxe -version)" =~ ^4.* ]]; then lix run travix hl "${args[@]}"; fi
+  # - if [[ "$(haxe -version)" =~ ^4.* ]]; then lix run travix hl "${args[@]}"; fi // only works for preview release for now...
 
 jobs:
   include:

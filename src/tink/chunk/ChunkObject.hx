@@ -3,6 +3,7 @@ package tink.chunk;
 import haxe.io.Bytes;
 
 interface ChunkObject {
+  function getByte(i:Int):Int;
   function getCursor():ChunkCursor;
   function flatten(into:Array<ByteChunk>):Void;
   function getLength():Int;

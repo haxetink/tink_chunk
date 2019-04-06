@@ -11,6 +11,9 @@ class BufferChunk implements ChunkObject {
   public function new(buffer)
     this.buffer = buffer;
 
+  public function getByte(i:Int):Int
+    return buffer[i];
+
   public function getCursor():ChunkCursor
     return (toBytes() : Chunk).cursor();
 

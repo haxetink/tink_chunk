@@ -134,7 +134,7 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
     
   #if (nodejs && !macro)
   @:from public static inline function ofBuffer(s:js.node.Buffer):Chunk 
-    return ofBytes(s.hxToBytes());
+    return new tink.chunk.nodejs.BufferChunk(s);
   #end
     
   public static function ofHex(s:String):Chunk {

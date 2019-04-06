@@ -16,10 +16,19 @@ class ChunkTest extends TestCase {
         assertEquals(string.substring(start, end), chunk.slice(start, end));    
       
   }
+
+  function testChunk() {
+    chunkTests(function (str: String): Chunk return str);
+    #if nodejs
+    chunkTests(function (str: String): Chunk
+      return js.node.Buffer.hxFromBytes(Bytes.ofString(str))
+    );
+    #end
+  }
   
-  function testBasic() {
+  function chunkTests(create: String -> Chunk) {
     var hello = 'hello, world!';
-    var chunk:Chunk = hello;
+    var chunk:Chunk = create(hello);
     
     compare(hello, chunk);
     

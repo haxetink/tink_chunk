@@ -39,8 +39,11 @@ class ChunkTest extends TestCase {
 
     assertEquals(hello, chunk);
     var i = 0;
-    for (c in chunk)
-      assertEquals(hello.charCodeAt(i++), c);
+    for (c in chunk) {
+      assertEquals(hello.charCodeAt(i), c);
+      assertEquals(hello.charCodeAt(i), chunk[i]);
+      i++;
+    }
     
     var bytes = chunk.toBytes();
       

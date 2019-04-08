@@ -10,6 +10,9 @@ private class EmptyChunk extends ChunkBase implements ChunkObject {
     super(); // https://github.com/HaxeFoundation/haxe/issues/7541
     #end
   }
+  
+  public function getByte(i:Int)
+    return 0;
     
   public function getLength()
     return 0;
@@ -34,6 +37,9 @@ private class CompoundChunk extends ChunkBase implements ChunkObject {
   
   var split:Int;
   var length:Int;
+  
+  public function getByte(i:Int)
+    return i < split ? left.getByte(i) : right.getByte(i - split);
   
   public function getLength()
     return this.length;
@@ -80,6 +86,10 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   public var length(get, never):Int;
     inline function get_length()
       return this.getLength();
+      
+  @:arrayAccess
+  public inline function getByte(i:Int):Int
+    return this.getByte(i);
       
   public function concat(that:Chunk) 
     return switch [length, that.length] {

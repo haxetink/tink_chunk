@@ -6,7 +6,7 @@ import tink.chunk.*;
 
 class BufferChunk implements ChunkObject {
   
-  public var buffer:Buffer;
+  var buffer:Buffer;
   
   public function new(buffer)
     this.buffer = buffer;

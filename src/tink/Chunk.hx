@@ -124,6 +124,11 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   @:to public inline function toBuffer()
     return js.node.Buffer.hxFromBytes(this.toBytes());
   #end
+  
+  #if (js && !nodejs && !macro)
+  @:to public inline function toBlob()
+    return new js.html.Blob([this.toBytes().getData()]);
+  #end
     
   static public function join(chunks:Array<Chunk>)
     return switch chunks {

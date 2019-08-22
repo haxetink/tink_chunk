@@ -31,55 +31,6 @@ private class EmptyChunk extends ChunkBase implements ChunkObject {
   static var EMPTY = Bytes.alloc(0);
 }
 
-private class CompoundChunk extends ChunkBase implements ChunkObject {
-  var left:Chunk;
-  var right:Chunk;
-  
-  var split:Int;
-  var length:Int;
-  
-  public function getByte(i:Int)
-    return i < split ? left.getByte(i) : right.getByte(i - split);
-  
-  public function getLength()
-    return this.length;
-    
-  public function new(left:Chunk, right:Chunk) {
-    #if python
-    super(); // https://github.com/HaxeFoundation/haxe/issues/7541
-    #end
-    //TODO: try balancing here
-    this.left = left;
-    this.right = right;
-    this.split = left.length;
-    this.length = split + right.length;
-  }
-  
-  override public function flatten(into:Array<ByteChunk>) {
-    (left:ChunkObject).flatten(into);
-    (right:ChunkObject).flatten(into);
-  }
-    
-  public function slice(from:Int, to:Int):Chunk 
-    return
-      left.slice(from, to).concat(right.slice(from - split, to - split));
-    
-  public function blitTo(target:Bytes, offset:Int):Void {
-    left.blitTo(target, offset);
-    right.blitTo(target, offset + split);
-  }
-    
-  public function toString() 
-    return toBytes().toString();
-    
-  public function toBytes() {
-    var ret = Bytes.alloc(this.length);
-    blitTo(ret, 0);
-    return ret;
-  }
-  
-}
-
 @:pure
 abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   
@@ -92,12 +43,7 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
     return this.getByte(i);
       
   public function concat(that:Chunk) 
-    return switch [length, that.length] {
-      case [0, 0]: EMPTY;
-      case [0, _]: that;
-      case [_, 0]: this;
-      case _: new CompoundChunk(this, that);
-    }
+    return CompoundChunk.cons(this, that);
     
   public inline function cursor()  
     return this.getCursor();

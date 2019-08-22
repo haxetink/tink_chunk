@@ -60,4 +60,13 @@ class ChunkTest extends TestCase {
     compare(hello, chunk);  
   }
 
+  function testIssue9() {
+    var bytes = Bytes.alloc(256);
+    var chunk:Chunk = Chunk.EMPTY;
+    for(i in 0...10000) chunk = chunk & bytes;
+    var out = Bytes.alloc(chunk.length);
+    chunk.blitTo(out, 0);    
+    assertTrue(true);
+  }
+
 }

@@ -6,8 +6,8 @@
 	"contributors": [
 		"back2dos"
 	],
-	"version": "0.3.0",
-	"releasenote": "Add BufferChunk (nodejs).",
+	"version": "0.3.1",
+	"releasenote": "Fix CompoundChunk#blitTo stack overflow",
 	"tags": [
 		"tink",
 		"cross",

@@ -89,9 +89,11 @@ class ChunkTest {
     return bytes;
   }
   
+  #if nodejs
   function randomBuffer(size:Int) {
     var buffer = js.node.Buffer.alloc(256);
     for(i in 0...buffer.length) buffer[i] = Std.random(0xff);
     return buffer;
   }
+  #end
 }

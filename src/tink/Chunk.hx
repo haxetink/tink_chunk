@@ -120,6 +120,21 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   @:op(a & b) static function rcatBytes(a:Chunk, b:Bytes)
     return catChunk(a, b);
     
+  @:op(a == b) static function eqChunk(a:Chunk, b:Chunk)
+    return a.toString() == b.toString(); // TODO: optimize
+    
+  @:op(a == b) static function reqString(a:Chunk, b:String)
+    return a.toString() == b.toString(); // TODO: optimize
+    
+  @:op(a == b) static function leqString(a:String, b:Chunk)
+    return a.toString() == b.toString(); // TODO: optimize
+    
+  @:op(a == b) static function leqBytes(a:Bytes, b:Chunk)
+    return a.toString() == b.toString(); // TODO: optimize
+    
+  @:op(a == b) static function reqBytes(a:Chunk, b:Bytes)
+    return a.toString() == b.toString(); // TODO: optimize
+    
   #if tink_json
   
   @:to inline function toRepresentation():tink.json.Representation<Bytes> 

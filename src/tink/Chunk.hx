@@ -105,7 +105,7 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
     return bytes;
   }
     
-  @:op(a & b) static function catChunk(a:Chunk, b:Chunk)
+  @:op(a & b) inline static function catChunk(a:Chunk, b:Chunk)
     return a.concat(b);
     
   @:op(a & b) static function rcatString(a:Chunk, b:String)

@@ -18,7 +18,8 @@ os:
 
 env:
   - HAXE_VERSION=3.4.7
-  - HAXE_VERSION=latest
+  - HAXE_VERSION=stable
+  - HAXE_VERSION=nightly
   
 install:
   - npm i -g lix
@@ -30,7 +31,7 @@ script:
   - lix run travix neko
   - lix run travix python
   - lix run travix node
-  - lix run travix java
+  # - lix run travix java
   - lix run travix lua
   - lix run travix cpp
   - lix run travix cs

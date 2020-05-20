@@ -46,7 +46,7 @@ class BufferChunk implements ChunkObject {
   }
 
   static var alloc:Int->Buffer = 
-    if (untyped __js__('"allocUnsafe" in Buffer')) Buffer.allocUnsafe;
+    if (js.Syntax.code('"allocUnsafe" in Buffer')) Buffer.allocUnsafe;
     else function (size) return new Buffer(size);
 
   public function blitTo(target:Bytes, offset:Int):Void

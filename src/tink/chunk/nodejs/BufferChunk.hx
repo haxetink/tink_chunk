@@ -40,14 +40,10 @@ class BufferChunk implements ChunkObject {
     return buffer.toString();
 
   public function toBytes():Bytes {
-    var copy = alloc(buffer.length);
+    var copy = Buffer.allocUnsafe(buffer.length);
     buffer.copy(copy);
     return copy.hxToBytes();
   }
-
-  static var alloc:Int->Buffer = 
-    if (#if (haxe_ver >= 4) js.Syntax.code('"allocUnsafe" in Buffer') #else untyped __js__('"allocUnsafe" in Buffer') #end) Buffer.allocUnsafe;
-    else function (size) return new Buffer(size);
 
   public function blitTo(target:Bytes, offset:Int):Void
     return buffer.copy(Buffer.hxFromBytes(target), offset);

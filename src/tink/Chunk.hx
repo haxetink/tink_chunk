@@ -72,6 +72,8 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   #end
   
   #if (js && !nodejs && !macro)
+  @:to public inline function toUint8Array()
+    return new js.lib.Uint8Array(this.toBytes().getData());
   @:to public inline function toBlob(?opt)
     return new js.html.Blob([this.toBytes().getData()], opt);
   #end
@@ -96,6 +98,10 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   #if (nodejs && !macro)
   @:from public static inline function ofBuffer(s:js.node.Buffer):Chunk 
     return new tink.chunk.nodejs.BufferChunk(s);
+  #end
+  #if (js && !nodejs)
+  @:from public static inline function ofArrayBufferView(a:js.lib.ArrayBufferView):Chunk
+    return Chunk.ofBytes(Bytes.ofData(a.buffer));
   #end
     
   public static function ofHex(s:String):Chunk {

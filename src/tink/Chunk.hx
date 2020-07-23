@@ -72,7 +72,10 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   #end
   
   #if (js && !nodejs && !macro)
-  @:to public inline function toBlob(?opt)
+  @:to inline function castToBlob()
+    return toBlob();
+  
+  public inline function toBlob(?opt)
     return new js.html.Blob([this.toBytes().getData()], opt);
   #end
     

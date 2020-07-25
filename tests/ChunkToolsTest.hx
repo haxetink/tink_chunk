@@ -46,6 +46,26 @@ class ChunkToolsTest {
     return asserts.done();
   }
   
+  @:variant('000000', 0)
+  @:variant('ffff7f', 8388607)
+  @:variant('000080', 8388608)
+  @:variant('ffffff', 16777215)
+  public function uint24LE(input:String, output:Int) {
+    asserts.assert(hex(input).readUInt24LE(0) == output);
+    asserts.assert(output.writeUInt24LE().toHex() == input);
+    return asserts.done();
+  }
+  
+  @:variant('000000', 0)
+  @:variant('ffff7f', 8388607)
+  @:variant('000080', -8388608)
+  @:variant('ffffff', -1)
+  public function int24LE(input:String, output:Int) {
+    asserts.assert(hex(input).readInt24LE(0) == output);
+    asserts.assert(output.writeInt24LE().toHex() == input);
+    return asserts.done();
+  }
+  
   @:variant('00000000', 0)
   @:variant('ffffff7f', 2147483647)
   @:variant('00000080', -2147483648)

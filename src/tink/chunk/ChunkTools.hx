@@ -14,8 +14,7 @@ class ChunkTools {
 	}
 	
 	public static function readInt8(chunk:Chunk, offset:Int):Int {
-		check(chunk, offset, 1);
-		var val = chunk[offset];
+		var val = readUInt8(chunk, offset);
 		return val > 0x7f ? val - 0x100 : val;
 	}
 	
@@ -27,17 +26,21 @@ class ChunkTools {
 	}
 	
 	public static function readInt16LE(chunk:Chunk, offset:Int):Int {
-		check(chunk, offset, 2);
+		var val = readUInt16LE(chunk, offset);
+		return val > 0x7fff ? val - 0x10000 : val;
+	}
+	
+	public static function readUInt24LE(chunk:Chunk, offset:Int):Int {
+		check(chunk, offset, 3);
 		var first = chunk[offset];
-		var last = chunk[offset + 1];
-		var val = first + (last << 8);
-		
-		return
-			#if python
-				val > 0x7fff ? val - 0x10000 : val;
-			#else
-				val | (val & 1 << 15) * 0x1fffe;
-			#end
+		var mid = chunk[offset + 1];
+		var last = chunk[offset + 2];
+		return first + (mid << 8) + (last << 16);
+	}
+	
+	public static function readInt24LE(chunk:Chunk, offset:Int):Int {
+		var val = readUInt24LE(chunk, offset);
+		return val > 0x7fffff ? val - 0x1000000 : val;
 	}
 	
 	public static function readInt32LE(chunk:Chunk, offset:Int):Int {
@@ -85,6 +88,18 @@ class ChunkTools {
 		return writeUInt16LE(v);
 	}
 	
+	public static function writeUInt24LE(v:Int):Chunk {
+		var bytes = Bytes.alloc(3);
+		bytes.set(0, v & 0xff);
+		bytes.set(1, (v >>> 8) & 0xff);
+		bytes.set(2, (v >>> 16) & 0xff);
+		return bytes;
+	}
+	
+	public static inline function writeInt24LE(v:Int):Chunk {
+		return writeUInt24LE(v);
+	}
+	
 	public static inline function writeInt32LE(v:Int):Chunk {
 		var bytes = Bytes.alloc(4);
 		bytes.set(0, v & 0xff);
@@ -94,7 +109,7 @@ class ChunkTools {
 		return bytes;
 	}
 	
-	static function check(chunk:Chunk, offset:Int, length:Int) {
+	static inline function check(chunk:Chunk, offset:Int, length:Int) {
 		if(chunk.length < offset + length) throw 'Out of range (chunk length = ${chunk.length}, read offset = ${offset}, read length = ${length})';
 	}
 }

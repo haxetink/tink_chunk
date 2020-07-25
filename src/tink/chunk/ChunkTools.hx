@@ -16,8 +16,7 @@ class ChunkTools {
 	public static function readInt8(chunk:Chunk, offset:Int):Int {
 		check(chunk, offset, 1);
 		var val = chunk[offset];
-		if(val > 0x7f) val -= 0x100;
-		return val;
+		return val > 0x7f ? val - 0x100 : val;
 	}
 	
 	public static function readUInt16LE(chunk:Chunk, offset:Int):Int {
@@ -32,16 +31,29 @@ class ChunkTools {
 		var first = chunk[offset];
 		var last = chunk[offset + 1];
 		var val = first + (last << 8);
-		return val | (val & 1 << 15) * 0x1fffe;
+		
+		return
+			#if python
+				val > 0x7fff ? val - 0x10000 : val;
+			#else
+				val | (val & 1 << 15) * 0x1fffe;
+			#end
 	}
 	
 	public static function readInt32LE(chunk:Chunk, offset:Int):Int {
 		check(chunk, offset, 4);
 
-		return chunk[offset] +
+		var val = chunk[offset] +
 			(chunk[offset+1] << 8) +
 			(chunk[offset+2] << 16) +
 			(chunk[offset+3] << 24); // Overflow
+			
+		return
+			#if python
+				val > (python.Syntax.code('0x7fffffff'):Int) ? val - (python.Syntax.code('0x100000000'):Int) : val;
+			#else
+				val;
+			#end
 	}
 	
 	public static function readNullTerminatedString(chunk:Chunk, offset:Int):String {

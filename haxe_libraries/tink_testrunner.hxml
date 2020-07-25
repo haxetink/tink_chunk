@@ -1,6 +1,6 @@
--D tink_testrunner=0.7.2
-# @install: lix --silent download "gh://github.com/haxetink/tink_testrunner#ec30fcb186936b1b6dc352790ac2ff25ced992d5" into tink_testrunner/0.7.2/github/ec30fcb186936b1b6dc352790ac2ff25ced992d5
+# @install: lix --silent download "gh://github.com/haxetink/tink_testrunner#e86d59ba85044d49e922936063abeb8c1fcfc8cc" into tink_testrunner/0.8.0/github/e86d59ba85044d49e922936063abeb8c1fcfc8cc
 -lib ansi
 -lib tink_macro
 -lib tink_streams
--cp ${HAXE_LIBCACHE}/tink_testrunner/0.7.2/github/ec30fcb186936b1b6dc352790ac2ff25ced992d5/src
+-cp ${HAXE_LIBCACHE}/tink_testrunner/0.8.0/github/e86d59ba85044d49e922936063abeb8c1fcfc8cc/src
+-D tink_testrunner=0.8.0

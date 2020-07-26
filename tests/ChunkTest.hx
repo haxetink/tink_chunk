@@ -83,6 +83,15 @@ class ChunkTest {
     return asserts.done();
   }
   
+  @:variant('00')
+  @:variant('ff')
+  @:variant('00ff')
+  @:variant('ffff')
+  public function ofHex(value:String) {
+    asserts.assert(Chunk.ofHex(value).toHex() == value);
+    return asserts.done();
+  }
+  
   function randomBytes(size:Int) {
     var bytes = haxe.io.Bytes.alloc(256);
     for(i in 0...bytes.length) bytes.set(i, Std.random(0xff));

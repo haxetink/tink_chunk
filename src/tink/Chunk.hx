@@ -104,8 +104,18 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   public static function ofHex(s:String):Chunk {
     var length = s.length >> 1;
     var bytes = Bytes.alloc(length);
-    for(i in 0...length) bytes.set(i, Std.parseInt('0x' + s.substr(i * 2, 2)));
+    for(i in 0...length) bytes.set(i, parseHex(s.substr(i * 2, 2)));
     return bytes;
+  }
+  
+  // Workaround parseInt bug in Haxe3/Lua
+  // TODO: actually this is an optimization and can be applied on other targets too
+  static inline function parseHex(v:String) {
+    #if lua
+    return lua.Lua.tonumber(v, 16);
+    #else
+    return Std.parseInt('0x' + v);
+    #end
   }
     
   @:op(a & b) inline static function catChunk(a:Chunk, b:Chunk)

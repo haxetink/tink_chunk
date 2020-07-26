@@ -54,6 +54,8 @@ class ChunkTools {
 		return
 			#if python
 				val > (python.Syntax #if haxe4 .code #else .pythonCode #end('0x7fffffff'):Int) ? val - (python.Syntax #if haxe4 .code #else .pythonCode #end('0x100000000'):Int) : val;
+			#elseif lua
+				val > (untyped __lua__('0x7fffffff'):Int) ? val - (untyped __lua__('0x100000000'):Int) : val;
 			#else
 				val;
 			#end

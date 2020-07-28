@@ -101,17 +101,18 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   @:from public static inline function ofBuffer(s:js.node.Buffer):Chunk 
     return new tink.chunk.nodejs.BufferChunk(s);
   #end
+  
+  @:from
+  public static function ofByte(byte:Int):Chunk {
+    var bytes = Bytes.alloc(1);
+    bytes.set(0, byte);
+    return bytes;
+  }
     
   public static function ofHex(s:String):Chunk {
     var length = s.length >> 1;
     var bytes = Bytes.alloc(length);
     for(i in 0...length) bytes.set(i, parseHex(s.substr(i * 2, 2)));
-    return bytes;
-  }
-  
-  public static function ofByte(byte:Int):Chunk {
-    var bytes = Bytes.alloc(1);
-    bytes.set(0, byte);
     return bytes;
   }
   

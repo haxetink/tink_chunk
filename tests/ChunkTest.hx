@@ -7,6 +7,7 @@ import tink.Chunk;
 using StringTools;
 
 @:asserts
+@:timeout(100000)
 class ChunkTest {
   public function new() {}
   

@@ -31,7 +31,8 @@ private class EmptyChunk extends ChunkBase implements ChunkObject {
   static var EMPTY = Bytes.alloc(0);
 }
 
-@:pure
+@:pure 
+@:using(tink.chunk.ChunkTools)
 abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   
   public var length(get, never):Int;
@@ -105,6 +106,12 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
     var length = s.length >> 1;
     var bytes = Bytes.alloc(length);
     for(i in 0...length) bytes.set(i, parseHex(s.substr(i * 2, 2)));
+    return bytes;
+  }
+  
+  public static function ofByte(byte:Int):Chunk {
+    var bytes = Bytes.alloc(1);
+    bytes.set(0, byte);
     return bytes;
   }
   

@@ -102,13 +102,25 @@ class ChunkTools {
 		return writeUInt24LE(v);
 	}
 	
-	public static inline function writeInt32LE(v:Int):Chunk {
+	public static function writeInt32LE(v:Int):Chunk {
 		var bytes = Bytes.alloc(4);
 		bytes.set(0, v & 0xff);
 		bytes.set(1, (v >>> 8) & 0xff);
 		bytes.set(2, (v >>> 16) & 0xff);
 		bytes.set(3, (v >>> 24) & 0xff);
 		return bytes;
+	}
+	
+	// counterpart of StringTools.lpad
+	public static function lpad(chunk:Chunk, pad:Chunk, length:Int):Chunk {
+		if(pad.length != 0) while(chunk.length < length) chunk = pad & chunk;
+		return chunk;
+	}
+	
+	// counterpart of StringTools.rpad
+	public static function rpad(chunk:Chunk, pad:Chunk, length:Int):Chunk {
+		if(pad.length != 0) while(chunk.length < length) chunk = chunk & pad;
+		return chunk;
 	}
 	
 	static inline function check(chunk:Chunk, offset:Int, length:Int) {

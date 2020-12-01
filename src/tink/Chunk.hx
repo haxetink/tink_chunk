@@ -31,6 +31,13 @@ private class EmptyChunk extends ChunkBase implements ChunkObject {
   static var EMPTY = Bytes.alloc(0);
 }
 
+
+@:jsonStringify(function(chunk) return chunk.toBytes())
+@:jsonParse(tink.Chunk.ofBytes)
+#if haxe4
+@:tink.encode(function(chunk) return chunk.toBytes())
+@:tink.decode(tink.Chunk.ofBytes)
+#end
 @:pure 
 @:using(tink.chunk.ChunkTools)
 abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
@@ -90,7 +97,7 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
           ret = ret & v[i];
         ret;
     }
-
+  
   @:from public static inline function ofBytes(b:Bytes):Chunk 
     return (ByteChunk.of(b) : ChunkObject);
     
@@ -155,16 +162,6 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
     
   @:op(a == b) static function reqBytes(a:Chunk, b:Bytes)
     return a.toString() == b.toString(); // TODO: optimize
-    
-  #if tink_json
-  
-  @:to inline function toRepresentation():tink.json.Representation<Bytes> 
-    return new tink.json.Representation(toBytes());
-    
-  @:from static inline function ofRepresentation<T>(rep:tink.json.Representation<Bytes>):Chunk
-    return ofBytes(rep.get());
-    
-  #end
     
   static public var EMPTY(default, null):Chunk = ((new EmptyChunk() : ChunkObject) : Chunk);//haxe 3.2.1 ¯\_(ツ)_/¯
 }

@@ -59,6 +59,9 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   public inline function iterator()
     return new ChunkIterator(this.getCursor());
       
+  public inline function sub(pos:Int, len:Int):Chunk 
+    return this.slice(pos, pos + len);
+      
   public inline function slice(from:Int, to:Int):Chunk 
     return this.slice(from, to);
     

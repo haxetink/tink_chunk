@@ -104,9 +104,14 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
   @:from public static inline function ofString(s:String):Chunk 
     return ofBytes(Bytes.ofString(s));
     
+  #if (js && !nodejs)
+  @:from public static inline function ofUint8Array(b:js.lib.Uint8Array):Chunk 
+    return Bytes.ofData(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength)); // TODO: create Uint8ArrayChunk to optimize
+  #end
+    
   #if (nodejs && !macro)
-  @:from public static inline function ofBuffer(s:js.node.Buffer):Chunk 
-    return new tink.chunk.nodejs.BufferChunk(s);
+  @:from public static inline function ofBuffer(b:js.node.Buffer):Chunk 
+    return new tink.chunk.nodejs.BufferChunk(b);
   #end
   
   @:from

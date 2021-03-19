@@ -21,6 +21,20 @@ class ChunkTest {
       
   }
   
+  #if (js && !nodejs)
+  public function uint8Array() {
+    
+    var buffer = new js.lib.ArrayBuffer(10);
+    var view = new js.lib.DataView(buffer);
+    for(i in 0...buffer.byteLength) view.setUint8(i, i);
+    var arr = new js.lib.Uint8Array(buffer, 2, 4);
+    var chunk:Chunk = arr;
+    for(i in 0...4) asserts.assert(chunk[i] == 2 + i);
+    asserts.assert(chunk.length == 4);
+    return asserts.done();
+  }
+  #end
+  
   @:variant(function(str:String):Chunk return str)
   #if nodejs
   @:variant(function(str:String):Chunk return js.node.Buffer.from(str))

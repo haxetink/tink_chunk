@@ -76,6 +76,33 @@ class ChunkToolsTest {
     return asserts.done();
   }
   
+  @:variant('0000000000000000', 0)
+  @:variant('000000000000f0bf', -1)
+  @:variant('000000000000f03f', 1)
+  @:variant('ffffffffffff3f43', 9007199254740991)
+  @:variant('ffffffffffff3fc3', -9007199254740991)
+  @:variant('efcdab9078563412', 5.62634910890851593421708369942E-221)
+  @:variant('1234567890abcdef', -3.59870942784831628062373076293E230)
+  @:variant('000000000000f07f', Math.POSITIVE_INFINITY)
+  @:variant('000000000000f0ff', Math.NEGATIVE_INFINITY)
+  public function doubleLE(input:String, output:Float) {
+    asserts.assert(hex(input).readDoubleLE(0) == output);
+    asserts.assert(output.writeDoubleLE().toHex() == input);
+    return asserts.done();
+  }
+  
+  public function nanDoubleLE() {
+    var inputs = [
+      '010000000000f07f',
+      '000000000000f87f',
+      Math.NaN.writeDoubleLE().toHex(),
+    ];
+    
+    for(input in inputs)
+      asserts.assert(Math.isNaN(hex(input).readDoubleLE(0)));
+    return asserts.done();
+  }
+  
   @:variant('41', 'A')
   @:variant('4100', 'A')
   public function cstring(input:String, output:String) {

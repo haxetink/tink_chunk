@@ -2,6 +2,7 @@ package tink.chunk;
 
 import haxe.io.Bytes;
 import haxe.io.BytesInput;
+import haxe.io.FPHelper;
 import tink.Chunk;
 
 // TODO: integrate into Chunk ultimately
@@ -61,6 +62,12 @@ class ChunkTools {
 			#end
 	}
 	
+	public static function readDoubleLE(chunk:Chunk, offset:Int):Float {
+		var l = readInt32LE(chunk, 0);
+		var h = readInt32LE(chunk, 4);
+		return FPHelper.i64ToDouble(l, h);
+	}
+	
 	public static function readNullTerminatedString(chunk:Chunk, offset:Int):String {
 		return try new BytesInput(chunk, offset).readUntil(0) catch(e:Dynamic) chunk.toString();
 	}
@@ -108,6 +115,22 @@ class ChunkTools {
 		bytes.set(1, (v >>> 8) & 0xff);
 		bytes.set(2, (v >>> 16) & 0xff);
 		bytes.set(3, (v >>> 24) & 0xff);
+		return bytes;
+	}
+	
+	public static function writeDoubleLE(v:Float):Chunk {
+		var bytes = Bytes.alloc(8);
+		var i64 = FPHelper.doubleToI64(v);
+		var l = i64.low;
+		var h = i64.high;
+		bytes.set(0, l & 0xff);
+		bytes.set(1, (l >>> 8) & 0xff);
+		bytes.set(2, (l >>> 16) & 0xff);
+		bytes.set(3, (l >>> 24) & 0xff);
+		bytes.set(4, h & 0xff);
+		bytes.set(5, (h >>> 8) & 0xff);
+		bytes.set(6, (h >>> 16) & 0xff);
+		bytes.set(7, (h >>> 24) & 0xff);
 		return bytes;
 	}
 	

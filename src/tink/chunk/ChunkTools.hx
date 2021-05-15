@@ -139,7 +139,12 @@ class ChunkTools {
 	}
 	
 	public static function writeDoubleLE(v:Float):Chunk {
-		#if python
+		#if lua
+		var data = untyped __lua__('("<d"):pack({0})', v);
+		var bytes = Bytes.alloc(8);
+		for(i in 0...8) bytes.set(i, lua.NativeStringTools.byte(data, i+1));
+		return bytes;
+		#elseif python
 		return Bytes.ofData(PythonStruct.pack('<d', v));
 		#else
 		var bytes = Bytes.alloc(8);

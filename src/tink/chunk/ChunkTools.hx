@@ -73,28 +73,44 @@ class ChunkTools {
 	}
 	
 	public static function writeUInt8(v:Int):Chunk {
+		#if python
+		return Bytes.ofData(PythonStruct.pack('<B', v));
+		#else
 		var bytes = Bytes.alloc(1);
 		bytes.set(0, v & 0xff);
 		return bytes;
+		#end
 	}
 	
 	public static function writeInt8(v:Int):Chunk {
+		#if python
+		return Bytes.ofData(PythonStruct.pack('<b', v));
+		#else
 		var bytes = Bytes.alloc(1);
 		v = v & 0xff;
 		if(v < 0) v += 0x100;
 		bytes.set(0, v);
 		return bytes;
+		#end
 	}
 	
 	public static function writeUInt16LE(v:Int):Chunk {
+		#if python
+		return Bytes.ofData(PythonStruct.pack('<H', v));
+		#else
 		var bytes = Bytes.alloc(2);
 		bytes.set(0, v & 0xff);
 		bytes.set(1, (v >>> 8) & 0xff);
 		return bytes;
+		#end
 	}
 	
 	public static inline function writeInt16LE(v:Int):Chunk {
+		#if python
+		return Bytes.ofData(PythonStruct.pack('<h', v));
+		#else
 		return writeUInt16LE(v);
+		#end
 	}
 	
 	public static function writeUInt24LE(v:Int):Chunk {
@@ -110,19 +126,27 @@ class ChunkTools {
 	}
 	
 	public static function writeInt32LE(v:Int):Chunk {
+		#if python
+		return Bytes.ofData(PythonStruct.pack('<l', v));
+		#else
 		var bytes = Bytes.alloc(4);
 		bytes.set(0, v & 0xff);
 		bytes.set(1, (v >>> 8) & 0xff);
 		bytes.set(2, (v >>> 16) & 0xff);
 		bytes.set(3, (v >>> 24) & 0xff);
 		return bytes;
+		#end
 	}
 	
 	public static function writeDoubleLE(v:Float):Chunk {
+		#if python
+		return Bytes.ofData(PythonStruct.pack('<d', v));
+		#else
 		var bytes = Bytes.alloc(8);
 		var i64 = FPHelper.doubleToI64(v);
 		var l = i64.low;
 		var h = i64.high;
+		trace(v,l,h);
 		bytes.set(0, l & 0xff);
 		bytes.set(1, (l >>> 8) & 0xff);
 		bytes.set(2, (l >>> 16) & 0xff);
@@ -132,6 +156,7 @@ class ChunkTools {
 		bytes.set(6, (h >>> 16) & 0xff);
 		bytes.set(7, (h >>> 24) & 0xff);
 		return bytes;
+		#end
 	}
 	
 	// counterpart of StringTools.lpad
@@ -150,3 +175,11 @@ class ChunkTools {
 		if(chunk.length < offset + length) throw 'Out of range (chunk length = ${chunk.length}, read offset = ${offset}, read length = ${length})';
 	}
 }
+
+#if python
+@:pythonImport('struct')
+extern class PythonStruct {
+	static function pack(format:String, value:Dynamic):python.Bytes;
+	static function unpack(format:String, value:python.Bytes):Dynamic;
+}
+#end

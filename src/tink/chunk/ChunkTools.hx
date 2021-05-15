@@ -151,7 +151,6 @@ class ChunkTools {
 		var i64 = FPHelper.doubleToI64(v);
 		var l = i64.low;
 		var h = i64.high;
-		trace(v,l,h);
 		bytes.set(0, l & 0xff);
 		bytes.set(1, (l >>> 8) & 0xff);
 		bytes.set(2, (l >>> 16) & 0xff);

@@ -6,8 +6,8 @@
 	"contributors": [
 		"back2dos"
 	],
-	"version": "0.3.1",
-	"releasenote": "Fix CompoundChunk#blitTo stack overflow",
+	"version": "0.4.0",
+	"releasenote": "Added helper read/write functions to ChunkTools",
 	"tags": [
 		"tink",
 		"cross",

@@ -1,6 +1,6 @@
 # Tinkerbell Binary Chunks
 
-[![Build Status](https://travis-ci.org/haxetink/tink_chunk.svg?branch=master)](https://travis-ci.org/haxetink/tink_chunk)
+[![Build Status](https://github.com/haxetink/tink_chunk/actions/workflows/ci.yml/badge.svg)](https://github.com/haxetink/tink_chunk/actions)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/haxetink/public)
 
 This library provides an abstraction for readonly binary data, that can be sliced and concatenated without copying the actual payload.

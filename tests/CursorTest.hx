@@ -1,58 +1,60 @@
 package;
 
-import haxe.unit.TestCase;
 import tink.Chunk;
 
-class CursorTest extends TestCase {
+@:asserts
+class CursorTest {
+  public function new() {}
   
-  function testCursor() {
+  public function cursor() {
     var chunk:Chunk = '0123456789';
     var cursor = Chunk.EMPTY.cursor();
     
     cursor.shift(chunk.concat(chunk).concat(chunk));
     
     for (i in 0...5)
-      assertTrue(cursor.next());
+      asserts.assert(cursor.next());
       
-    assertEquals('5'.code, cursor.currentByte);
-    assertEquals(5, cursor.currentPos);
-    assertEquals(30, cursor.length);
+    asserts.assert(cursor.currentByte == '5'.code);
+    asserts.assert(cursor.currentPos == 5);
+    asserts.assert(cursor.length == 30);
     
     cursor.shift(chunk);
     
-    assertEquals('5'.code, cursor.currentByte);
-    assertEquals(0, cursor.currentPos);
-    assertEquals(35, cursor.length);
+    asserts.assert(cursor.currentByte == '5'.code);
+    asserts.assert(cursor.currentPos == 0);
+    asserts.assert(cursor.length == 35);
     
     for (i in 0...20)
-      assertTrue(cursor.next());
+      asserts.assert(cursor.next());
       
-    assertEquals('5'.code, cursor.currentByte);
-    assertEquals(20, cursor.currentPos);
+    asserts.assert(cursor.currentByte == '5'.code);
+    asserts.assert(cursor.currentPos == 20);
     
     for (i in 0...5)
-      assertTrue(cursor.next());
+      asserts.assert(cursor.next());
       
-    assertEquals('0'.code, cursor.currentByte);
+    asserts.assert(cursor.currentByte == '0'.code);
     cursor.shift(chunk);
 
     for (i in 0...100) {
-      assertEquals('0'.code, cursor.currentByte);
-      assertEquals(0, cursor.currentPos);
-      assertEquals(20, cursor.length);
+      asserts.assert(cursor.currentByte == '0'.code);
+      asserts.assert(cursor.currentPos == 0);
+      asserts.assert(cursor.length == 20);
       
       for (i in 0...20)
-        assertEquals(cursor.next(), i < 19);
+        asserts.assert(i < 19 == cursor.next());
       
-      assertEquals( -1, cursor.currentByte);
-      assertEquals(cursor.length, cursor.currentPos);    
+      asserts.assert(cursor.currentByte ==  -1);
+      asserts.assert(cursor.currentPos == cursor.length);    
       
       cursor.moveTo(10);
       cursor.moveBy(-20);  
     }
+    return asserts.done();
   }
 
-  function testSeek() {
+  public function seek() {
     var first = 'abcdefghijklmnopqrstuvwxyz';
     var second = first.toUpperCase();
     
@@ -83,8 +85,8 @@ class CursorTest extends TestCase {
 
       function expect(length:Int, ?pos:haxe.PosInfos)
         switch c.seek(together, { withoutPruning: noPrune }) {
-          case Some(v): assertEquals(length, v.length, pos);
-          case None: assertTrue(false, pos);
+          case Some(v): asserts.assert(v.length == length);
+          case None: asserts.fail('Expect to seek succesfully');
         }
 
       expect(321);
@@ -93,27 +95,30 @@ class CursorTest extends TestCase {
 
     }
 
-    assertEquals(204, c.length);
+    asserts.assert(c.length == 204);
+    return asserts.done();
   }
   
-  function testSweep() {
+  public function sweep() {
     var chunk:Chunk = '0123456789';
     var cursor = chunk.cursor();
-    assertEquals('01234', cursor.sweep(5));
-    assertEquals(5, cursor.currentPos);
-    assertEquals('56', cursor.sweepTo(7));
-    assertEquals(7, cursor.currentPos);
+    asserts.assert(cursor.sweep(5) == '01234');
+    asserts.assert(cursor.currentPos == 5);
+    asserts.assert(cursor.sweepTo(7) == '56');
+    asserts.assert(cursor.currentPos == 7);
     
     var cursor = chunk.cursor();
     cursor.next();
-    assertEquals('12345', cursor.sweep(5));
-    assertEquals(6, cursor.currentPos);
-    assertEquals('6', cursor.sweepTo(7));
-    assertEquals(7, cursor.currentPos);
+    asserts.assert(cursor.sweep(5) == '12345');
+    asserts.assert(cursor.currentPos == 6);
+    asserts.assert(cursor.sweepTo(7) == '6');
+    asserts.assert(cursor.currentPos == 7);
+    return asserts.done();
   }
 
-  function testEdgeCase() {
-    assertEquals(0, Chunk.EMPTY.cursor().left().length);
-    assertEquals(0, Chunk.EMPTY.cursor().right().length);
+  public function edgeCase() {
+    asserts.assert(Chunk.EMPTY.cursor().left().length == 0);
+    asserts.assert(Chunk.EMPTY.cursor().right().length == 0);
+    return asserts.done();
   }
 }

@@ -9,7 +9,7 @@ class RunTests {
     Runner.run(TestBatch.make([
       new ChunkTest(),
       new ChunkToolsTest(),
-      // new CursorTest(),
+      new CursorTest(),
     ]), new CompactReporter()).handle(Runner.exit);
   }
   

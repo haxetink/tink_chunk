@@ -156,25 +156,27 @@ class ChunkCursor {
       
       for (i in b.from + offset ... b.to) {
         var byte = data.fastGet(i);
+        
+        function found() {
+          copy.moveBy(i-(b.from + offset) - seekable.length + 1);
+          var before = copy.left();
+          this.moveBy(before.length + seekable.length);
+          switch options {
+            case null | { withoutPruning: false | null }:
+              this.prune();
+            default:
+          }
+          return Some(before);
+        }
 
         if (candidates.length > 0) {
           var c = 0;
           while (c < count) {
             var pos = candidates[c];
-            if (seekable[pos] == byte) 
-              if (pos == max) {
-                copy.moveBy(i-(b.from + offset) - seekable.length + 1);
-                var before = copy.left();
-                this.moveBy(before.length + seekable.length);
-                switch options {
-                  case null | { withoutPruning: false | null }:
-                    this.prune();
-                  default:
-                }
-                return Some(before);
-              }
+            if (seekable[pos] == byte) {
+              if (pos == max) return found();
               else candidates[c++] = pos + 1;
-            else {
+            } else {
               count--;
               var last = candidates.pop();
               if (count > c)
@@ -184,8 +186,10 @@ class ChunkCursor {
           }
         }
 
-        if (byte == first)
-          count = candidates.push(1);
+        if (byte == first) {
+          if(max == 0) return found();
+          else count = candidates.push(1);
+        }
       }
 
       copy.moveBy(b.to - (b.from + offset));

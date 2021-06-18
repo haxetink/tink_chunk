@@ -2,6 +2,8 @@ package;
 
 import tink.Chunk;
 
+using tink.CoreApi;
+
 @:asserts
 class CursorTest {
   public function new() {}
@@ -53,6 +55,20 @@ class CursorTest {
     }
     return asserts.done();
   }
+  
+  public function move() {
+    var chunk:Chunk = '0123456789';
+    var cursor = (chunk & chunk).cursor();
+    
+    asserts.assert(cursor.currentPos == 0);
+    asserts.assert(cursor.left().toString() == '');
+    asserts.assert(cursor.right().toString() == '01234567890123456789');
+    cursor.moveBy(15);
+    asserts.assert(cursor.currentPos == 15);
+    asserts.assert(cursor.left().toString() == '012345678901234');
+    asserts.assert(cursor.right().toString() == '56789');
+    return asserts.done();
+  }
 
   public function seek() {
     var first = 'abcdefghijklmnopqrstuvwxyz';
@@ -97,6 +113,18 @@ class CursorTest {
 
     asserts.assert(c.length == 204);
     return asserts.done();
+  }
+  
+  @:variant('ab', 'b', 'a')
+  @:variant('abc', 'bc', 'a')
+  public function seekableAtEnd(input:Chunk, seekable:Chunk, result:Chunk) {
+    return switch input.cursor().seek(seekable) {
+      case Some(chunk):
+        asserts.assert(chunk.toString() == result.toString());
+        asserts.done();
+      case None:
+        asserts.fail('Expect to seek successfully: input=$input, seekable=$seekable, result=$result');
+    }
   }
   
   public function sweep() {

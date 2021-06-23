@@ -101,6 +101,12 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
         ret;
     }
   
+  @:from public static function ofByteArray(a:Array<Int>):Chunk {
+    final bytes = Bytes.alloc(a.length);
+    for(i => v in a) bytes.set(i, v);
+    return ofBytes(bytes);
+  }
+    
   @:from public static inline function ofBytes(b:Bytes):Chunk 
     return (ByteChunk.of(b) : ChunkObject);
     

@@ -114,8 +114,13 @@ abstract Chunk(ChunkObject) from ChunkObject to ChunkObject {
     return ofBytes(Bytes.ofString(s));
     
   #if (js && !nodejs)
+  @:from public static inline function ofDataView(v:js.lib.DataView):Chunk 
+    return Bytes.ofData(v.buffer.slice(v.byteOffset, v.byteOffset + v.byteLength));
   @:from public static inline function ofUint8Array(b:js.lib.Uint8Array):Chunk 
     return Bytes.ofData(b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength)); // TODO: create Uint8ArrayChunk to optimize
+  
+  @:to public inline function toArrayBuffer():js.lib.ArrayBuffer
+    return toBytes().getData();
   #end
     
   #if (nodejs && !macro)
